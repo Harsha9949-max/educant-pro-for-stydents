@@ -2,7 +2,7 @@
 import type { FC } from 'react';
 
 export type Page = 'dashboard' | 'syllabus' | 'exams' | 'study-buddy' | 'rewards' | 'profile';
-export type Theme = 'light' | 'dark' | 'colorful';
+export type Theme = 'light' | 'dark';
 
 export interface User {
   name: string;

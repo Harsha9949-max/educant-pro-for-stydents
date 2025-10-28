@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Card from '../components/Card';
 import ProgressBar from '../components/ProgressBar';
@@ -6,16 +5,10 @@ import { MOCK_SUBJECTS } from '../constants';
 import { Subject } from '../types';
 import { CheckCircleIcon } from '../components/icons/Icons';
 
-const SubjectCard: React.FC<{ subject: Subject }> = ({ subject }) => {
-  const [chapters, setChapters] = useState(subject.chapters);
-
-  const handleToggleChapter = (index: number) => {
-    const newChapters = [...chapters];
-    newChapters[index].completed = !newChapters[index].completed;
-    setChapters(newChapters);
-    // In a real app, you would update the backend here and recalculate progress
-  };
-
+const SubjectCard: React.FC<{
+  subject: Subject;
+  onToggleChapter: (subjectName: string, chapterIndex: number) => void;
+}> = ({ subject, onToggleChapter }) => {
   return (
     <Card className="animate-slideInUp">
       <div className="flex items-center justify-between">
@@ -32,10 +25,10 @@ const SubjectCard: React.FC<{ subject: Subject }> = ({ subject }) => {
       </div>
       <div className="mt-6 space-y-3">
         <h4 className="font-semibold text-text-secondary dark:text-text-secondary-dark">Chapters</h4>
-        {chapters.map((chapter, index) => (
+        {subject.chapters.map((chapter, index) => (
           <div
             key={index}
-            onClick={() => handleToggleChapter(index)}
+            onClick={() => onToggleChapter(subject.name, index)}
             className="flex items-center justify-between p-3 rounded-lg cursor-pointer bg-background dark:bg-background-dark hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02]"
           >
             <span className={`${chapter.completed ? 'line-through text-text-secondary dark:text-text-secondary-dark' : ''}`}>
@@ -52,9 +45,37 @@ const SubjectCard: React.FC<{ subject: Subject }> = ({ subject }) => {
 };
 
 const Syllabus: React.FC = () => {
-  const overallProgress = Math.round(
-    MOCK_SUBJECTS.reduce((acc, s) => acc + s.progress, 0) / MOCK_SUBJECTS.length
+  const [subjects, setSubjects] = useState<Subject[]>(() =>
+    MOCK_SUBJECTS.map(subject => {
+      const completedChapters = subject.chapters.filter(c => c.completed).length;
+      const totalChapters = subject.chapters.length;
+      const progress = totalChapters > 0 ? Math.round((completedChapters / totalChapters) * 100) : 0;
+      return { ...subject, progress };
+    })
   );
+
+  const handleToggleChapter = (subjectName: string, chapterIndex: number) => {
+    setSubjects(prevSubjects =>
+      prevSubjects.map(subject => {
+        if (subject.name === subjectName) {
+          const newChapters = [...subject.chapters];
+          newChapters[chapterIndex].completed = !newChapters[chapterIndex].completed;
+          
+          const completedChapters = newChapters.filter(c => c.completed).length;
+          const totalChapters = newChapters.length;
+          const progress = totalChapters > 0 ? Math.round((completedChapters / totalChapters) * 100) : 0;
+          
+          return { ...subject, chapters: newChapters, progress };
+        }
+        return subject;
+      })
+    );
+  };
+
+  const overallProgress = subjects.length > 0 
+    ? Math.round(subjects.reduce((acc, s) => acc + s.progress, 0) / subjects.length)
+    : 0;
+
 
   return (
     <div className="space-y-8">
@@ -77,8 +98,8 @@ const Syllabus: React.FC = () => {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {MOCK_SUBJECTS.map((subject) => (
-          <SubjectCard key={subject.name} subject={subject} />
+        {subjects.map((subject) => (
+          <SubjectCard key={subject.name} subject={subject} onToggleChapter={handleToggleChapter} />
         ))}
       </div>
     </div>

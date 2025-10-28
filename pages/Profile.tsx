@@ -6,7 +6,7 @@ import { LogoutIcon, SunIcon, MoonIcon, PencilIcon } from '../components/icons/I
 interface ProfileProps {
   user: User;
   onLogout: () => void;
-  theme: Omit<Theme, 'colorful'>;
+  theme: Theme;
   onToggleTheme: () => void;
 }
 
