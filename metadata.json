@@ -1,0 +1,7 @@
+{
+  "name": "Educant Pro Student Panel",
+  "description": "A modern, interactive student dashboard designed to track academic progress, provide AI-powered study assistance, and gamify the learning experience with rewards for attendance and achievements.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
