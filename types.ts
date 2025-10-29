@@ -1,5 +1,4 @@
-// FIX: Import FC type from react to fix 'Cannot find namespace React' error.
-import type { FC } from 'react';
+import React from 'react';
 
 export type Page = 'dashboard' | 'syllabus' | 'exams' | 'study-buddy' | 'rewards' | 'profile';
 export type Theme = 'light' | 'dark';
@@ -15,7 +14,7 @@ export interface User {
 export interface Subject {
   name: string;
   progress: number;
-  icon: FC<{ className?: string }>;
+  icon: React.FC<{ className?: string }>;
   chapters: { name: string; completed: boolean }[];
   color: string;
 }

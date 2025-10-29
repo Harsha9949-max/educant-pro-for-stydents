@@ -1,11 +1,11 @@
 
 import React, { useEffect, useState } from 'react';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import Card from '../components/Card';
 import { User, Page } from '../types';
 import { MOCK_SUBJECTS, MOCK_EXAMS, MOCK_CLASSES, MOCK_ACTIVITY, REWARD_MILESTONE } from '../constants';
 import { FireIcon, CurrencyRupeeIcon, ChartPieIcon, ClockIcon } from '../components/icons/Icons';
 import { SparklesIcon, BookOpenIcon, CalendarIcon } from '../components/icons/Icons';
+import CustomPieChart from '../components/CustomPieChart';
 
 interface DashboardProps {
   user: User;
@@ -53,11 +53,6 @@ const CountdownTimer: React.FC<{ targetDate: Date }> = ({ targetDate }) => {
 const Dashboard: React.FC<DashboardProps> = ({ user, setActivePage }) => {
 
   const overallProgress = Math.round(MOCK_SUBJECTS.reduce((acc, s) => acc + s.progress, 0) / MOCK_SUBJECTS.length);
-  const pieData = [
-    { name: 'Completed', value: overallProgress },
-    { name: 'Remaining', value: 100 - overallProgress },
-  ];
-  const COLORS = ['#4F46E5', '#E5E7EB'];
   const nextExam = MOCK_EXAMS[0];
 
   return (
@@ -116,20 +111,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setActivePage }) => {
                         <h2 className="text-xl font-semibold">Syllabus Progress</h2>
                          <BookOpenIcon className="w-6 h-6 text-primary" />
                     </div>
-                    <div className="w-full h-40">
-                    <ResponsiveContainer>
-                        <PieChart>
-                        <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={60} fill="#8884d8" paddingAngle={5}>
-                            {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                        </Pie>
-                        <Tooltip />
-                        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold fill-text-primary dark:fill-text-primary-dark">
-                            {`${overallProgress}%`}
-                        </text>
-                        </PieChart>
-                    </ResponsiveContainer>
+                    <div className="w-full h-40 flex items-center justify-center">
+                        <CustomPieChart progress={overallProgress} />
                     </div>
                 </Card>
                 <Card onClick={() => setActivePage('exams')}>
